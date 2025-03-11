@@ -3,9 +3,23 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from './user/entities/user.entity';
 import { UserModule } from './user/user.module';
 import { AuthModule } from './auth/auth.module';
+import { ConfigModule } from '@nestjs/config';
+import { ContentModule } from './content/content.module';
+import { VeilleModule } from './veille/veille.module';
+import { AlertsModule } from './alerts/alerts.module';
+import { PaymentsModule } from './payments/payments.module';
+import { ReportsModule } from './reports/reports.module';
 
 @Module({
   imports: [
+    ConfigModule.forRoot({
+      isGlobal: true,
+      envFilePath: '.env', // Chemin explicite
+      validationOptions: { 
+        allowUnknown: false, // Validation stricte
+        abortEarly: true 
+      }
+    }),
     TypeOrmModule.forRoot({
       type: 'postgres',
       host: process.env.DB_HOST,
@@ -19,6 +33,11 @@ import { AuthModule } from './auth/auth.module';
     }),
     UserModule,
     AuthModule,
+    ContentModule,
+    VeilleModule,
+    AlertsModule,
+    PaymentsModule,
+    ReportsModule,
   ],
 })
 export class AppModule {}

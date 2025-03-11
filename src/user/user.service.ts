@@ -22,6 +22,11 @@ export class UserService {
   async findByEmail(email: string) {
     return await this.userRepository.findOne({ where: { email } });
   }
+
+  async findById(id: number) {
+    return await this.userRepository.findOne({ where: { id } });
+  }
+
   async setResetToken(id: number, token: string) {
     return await this.userRepository.update(id, { resetPasswordToken: token });
   }

@@ -97,3 +97,44 @@ Nest is an MIT-licensed open source project. It can grow thanks to the sponsors 
 ## License
 
 Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+
+
+### Listes des endpoints par catégories
+
+1- 
+* POST /api/auth/register
+* POST /api/auth/login
+* POST /api/auth/logout
+* POST /api/auth/forgot-password
+* POST api/auth/reset-password
+* GET /api/user/profile
+* PUT /api/user/update
+* DELETE /api/user/date
+
+2- Gestion du contenu & Parametres
+* GET /api/settings
+* POST /api/settings/update
+* POST /api/support/contact
+
+3- Veille concurrentielle & Analyse de marché
+* GET /api/veille/competitors
+* POST /api/veille/competitors/add
+* DELETE /api/veille/competitors/remove
+* GET /api/veille/trends
+* GET /api/veille/news
+
+4- Opportunités & Risques (Alertes & Notifications)
+* GET /api/alerts
+* POST /api/alerts/subscribe
+* DELETE /api/alerts/unsubscribe
+* GET /api/regulations
+
+5- Gestion des Paiements & Abonnements
+* POST /api/payments/subscribe
+* POST /api/payments/cancel
+* POST /api/payments/status
+
+6- Generation de rapports & intelligence économique
+* POST /api/reports/request
+* POST /api/reports/status
+* POST /api/reports/download/{id}

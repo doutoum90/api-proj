@@ -1,4 +1,4 @@
-import { Controller, Post, Body, Res} from '@nestjs/common';
+import { Controller, Post, Body, Res, Req, Get } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
@@ -7,7 +7,7 @@ import { ResetPasswordDto } from './dto/rest-password.dto';
 
 @Controller('api/auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService) {}
+  constructor(private readonly authService: AuthService) { }
 
   @Post('register')
   async register(@Body() registerDto: RegisterDto) {
@@ -33,5 +33,16 @@ export class AuthController {
   @Post('reset-password')
   async resetPassword(@Body() resetPasswordDto: ResetPasswordDto) {
     return this.authService.resetPassword(resetPasswordDto);
+  }
+
+  @Post('refresh')
+  async refresh(@Req() refreshDto: Request) {
+    return this.authService.refresh(refreshDto);
+  }
+
+  // Verification endpoint
+  @Get('verify')
+  async verifyToken(@Req() req: Request) {
+    return this.authService.verifyToken(req);
   }
 }
