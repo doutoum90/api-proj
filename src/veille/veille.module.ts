@@ -1,15 +1,21 @@
 import { Module } from '@nestjs/common';
-import { VeilleService } from './veille.service';
-import { VeilleController } from './veille.controller';
+import { NewsService } from './services/news.service';
+import { NewsController } from './news.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { Competitors } from './entities/competitor.entity';
+import { Competitor } from './entities/competitor.entity';
 import { Trends } from './entities/trends.entity';
 import { News } from './entities/news.entity';
+import { MarketTrend } from './entities/market-trend.entity';
+import { CompetitorsService } from './services/competitors.service';
+import { TrendsService } from './services/trends.service';
+import { CompetitorsController } from './competitors.controller';
+import { TrendsController } from './trends.controller';
+
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Competitors, Trends, News])],
-  controllers: [VeilleController],
-  providers: [VeilleService],
-  exports: [VeilleService],
+  imports: [TypeOrmModule.forFeature([Competitor, Trends, News, MarketTrend])],
+  controllers: [NewsController, CompetitorsController, TrendsController],
+  providers: [NewsService, CompetitorsService, TrendsService],
+  exports: [NewsService, CompetitorsService, TrendsService],
 })
-export class VeilleModule {}
+export class VeilleModule { }

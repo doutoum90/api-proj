@@ -9,15 +9,19 @@ import { VeilleModule } from './veille/veille.module';
 import { AlertsModule } from './alerts/alerts.module';
 import { PaymentsModule } from './payments/payments.module';
 import { ReportsModule } from './reports/reports.module';
-
+import { CacheModule } from '@nestjs/cache-manager';
 @Module({
   imports: [
+    CacheModule.register({
+      ttl: parseInt(process.env.CACHE_TTL || '900'),
+    }),
+
     ConfigModule.forRoot({
       isGlobal: true,
       envFilePath: '.env', // Chemin explicite
-      validationOptions: { 
+      validationOptions: {
         allowUnknown: false, // Validation stricte
-        abortEarly: true 
+        abortEarly: true
       }
     }),
     TypeOrmModule.forRoot({
@@ -40,4 +44,4 @@ import { ReportsModule } from './reports/reports.module';
     ReportsModule,
   ],
 })
-export class AppModule {}
+export class AppModule { }

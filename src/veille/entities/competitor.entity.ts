@@ -1,13 +1,23 @@
-import { Entity, PrimaryGeneratedColumn, Column } from "typeorm";
+// competitor.entity.ts
+import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
 
 @Entity()
-export class Competitors {
-    @PrimaryGeneratedColumn()
-    id: number;
+export class Competitor {
+    @PrimaryGeneratedColumn('uuid')
+    id: string;
+
     @Column()
     name: string;
+
     @Column()
-    url: string;
-    @Column()
-    logo: string;
+    domain: string;
+
+    @Column({ nullable: true })
+    industry?: string;
+
+    @Column('jsonb', { default: [] })
+    keywords: string[];
+
+    @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
+    createdAt: Date;
 }

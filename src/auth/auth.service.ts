@@ -20,12 +20,18 @@ export class AuthService {
   async register(registerDto: RegisterDto): Promise<User> {
     const hashedPassword = await bcrypt.hash(registerDto.password, 10);
     return this.userService.createUser({
-      email: registerDto.email,
+      ...registerDto,
       password: hashedPassword,
+      name: registerDto.name,
+      lastname: registerDto.lastname,
+      dateOfBirth: registerDto.dateOfBirth,
+      profession: registerDto.profession,
+      skills: registerDto.skills,
+      typeAbonnement: registerDto.typeAbonnement
     });
   }
 
-  async login(loginDto: LoginDto): Promise<{ access_token: string, refresh_token: string }> {
+  async login(loginDto: LoginDto): Promise<{ access_token: string, refresh_token: string, user: User }> {
     const user = await this.validateUser(loginDto.email, loginDto.password);
     if (!user) throw new UnauthorizedException('Invalid credentials');
     const accessPayload = {
@@ -43,7 +49,8 @@ export class AuthService {
       access_token: this.jwtService.sign(accessPayload),
       refresh_token: this.jwtService.sign(refreshPayload, {
         expiresIn: '7d' // Durée plus longue pour le refresh token
-      })
+      }),
+      user
     };
   }
 
