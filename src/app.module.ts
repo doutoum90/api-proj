@@ -9,13 +9,13 @@ import { VeilleModule } from './veille/veille.module';
 import { AlertsModule } from './alerts/alerts.module';
 import { PaymentsModule } from './payments/payments.module';
 import { ReportsModule } from './reports/reports.module';
-import { CacheModule } from '@nestjs/cache-manager';
+import { MonitoringModule } from './monitoring/monitoring.module';
+import { SentimentModule } from './sentiment/sentiment.module';
+import { FinancialModule } from './financial/financial.module';
+import { CompetitorModule } from './competitor/competitor.module';
+import { NotificationModule } from './notification/notification.module';
 @Module({
   imports: [
-    CacheModule.register({
-      ttl: parseInt(process.env.CACHE_TTL || '900'),
-    }),
-
     ConfigModule.forRoot({
       isGlobal: true,
       envFilePath: '.env', // Chemin explicite
@@ -42,6 +42,11 @@ import { CacheModule } from '@nestjs/cache-manager';
     AlertsModule,
     PaymentsModule,
     ReportsModule,
+    MonitoringModule,
+    SentimentModule,
+    FinancialModule,
+    CompetitorModule,
+    NotificationModule,
   ],
 })
 export class AppModule { }

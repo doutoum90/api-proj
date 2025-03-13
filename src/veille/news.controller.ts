@@ -1,12 +1,10 @@
-import { Controller, Get, Query, UseInterceptors } from '@nestjs/common';
+import { Controller, Get, Query } from '@nestjs/common';
 import { ApiOperation, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { NewsService } from './services/news.service';
 import { NewsItemDto } from './dto/news-item.dto';
-import { CacheInterceptor } from '@nestjs/cache-manager';
 
 @ApiTags('Veille')
 @Controller('api/veille')
-@UseInterceptors(CacheInterceptor)
 export class NewsController {
   constructor(private readonly newsService: NewsService) {}
 

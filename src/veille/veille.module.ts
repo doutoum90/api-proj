@@ -10,10 +10,10 @@ import { CompetitorsService } from './services/competitors.service';
 import { TrendsService } from './services/trends.service';
 import { CompetitorsController } from './competitors.controller';
 import { TrendsController } from './trends.controller';
-
+import { HttpModule } from '@nestjs/axios';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Competitor, Trends, News, MarketTrend])],
+  imports: [TypeOrmModule.forFeature([Competitor, Trends, News, MarketTrend]), HttpModule],
   controllers: [NewsController, CompetitorsController, TrendsController],
   providers: [NewsService, CompetitorsService, TrendsService],
   exports: [NewsService, CompetitorsService, TrendsService],

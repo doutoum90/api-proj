@@ -1,12 +1,12 @@
 import { Module } from '@nestjs/common';
-import { ReportsController } from './reports.controller';
-import { Report } from './entities/report.entity';
+import { MonitoringService } from './services/monitoring.service';
+import { MonitoringController } from './monitoring.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { Competitor } from 'src/financial/entities/competitor.entity';
 import { CompetitorModule } from 'src/competitor/competitor.module';
 import { FinancialModule } from 'src/financial/financial.module';
 import { NotificationModule } from 'src/notification/notification.module';
 import { SentimentModule } from 'src/sentiment/sentiment.module';
-import { ReportService } from './services/report.service';
 
 @Module({
   imports: [
@@ -14,9 +14,8 @@ import { ReportService } from './services/report.service';
     FinancialModule,
     SentimentModule,
     NotificationModule,
-    TypeOrmModule.forFeature([Report])],
-  controllers: [ReportsController],
-  providers: [ReportService],
-  exports: [ReportService],
+    TypeOrmModule.forFeature([Competitor])],
+  controllers: [MonitoringController],
+  providers: [MonitoringService]
 })
-export class ReportsModule { }
+export class MonitoringModule { }
