@@ -1,11 +1,9 @@
 import { Injectable } from "@nestjs/common";
 import { Interval } from "@nestjs/schedule";
 import { FinancialService } from "src/financial/financial.service";
-import { CompetitorService } from "src/competitor/competitor.service";
 import { SentimentService } from "src/sentiment/services/sentiment.service";
 import { NotificationService } from "src/notification/notification.service";
 
-// monitoring.service.ts
 @Injectable()
 export class MonitoringService {
   private thresholds = {
@@ -13,17 +11,16 @@ export class MonitoringService {
     sentiment: 0.2    // 20% drop
   };
   constructor(
-    private readonly competitorService: CompetitorService,
     private readonly financialService: FinancialService,
     private readonly sentimentService: SentimentService,
     private readonly notificationService: NotificationService
-  ) {}
+  ) { }
 
   @Interval(300000) // Toutes les 5 minutes
   async checkChanges() {
-    const competitors = await this.competitorService.findAll();
-    
-    competitors.forEach(async competitor => {
+    // const competitors = await this.competitorService.findAll();
+
+    /* competitors.forEach(async competitor => {
       const changes = await this.detectSignificantChanges(competitor.id);
       if (changes.length > 0) {
         await this.notificationService.sendAlert({
@@ -32,7 +29,7 @@ export class MonitoringService {
           severity: 'high'
         });
       }
-    });
+    }); */
   }
 
   private async detectSignificantChanges(competitorId: string) {

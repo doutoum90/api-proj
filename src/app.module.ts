@@ -12,7 +12,6 @@ import { ReportsModule } from './reports/reports.module';
 import { MonitoringModule } from './monitoring/monitoring.module';
 import { SentimentModule } from './sentiment/sentiment.module';
 import { FinancialModule } from './financial/financial.module';
-import { CompetitorModule } from './competitor/competitor.module';
 import { NotificationModule } from './notification/notification.module';
 @Module({
   imports: [
@@ -45,7 +44,6 @@ import { NotificationModule } from './notification/notification.module';
     MonitoringModule,
     SentimentModule,
     FinancialModule,
-    CompetitorModule,
     NotificationModule,
   ],
 })
