@@ -5,7 +5,6 @@ import { UserModule } from './user/user.module';
 import { AuthModule } from './auth/auth.module';
 import { ConfigModule } from '@nestjs/config';
 import { ContentModule } from './content/content.module';
-import { VeilleModule } from './veille/veille.module';
 import { AlertsModule } from './alerts/alerts.module';
 import { PaymentsModule } from './payments/payments.module';
 import { ReportsModule } from './reports/reports.module';
@@ -13,6 +12,10 @@ import { MonitoringModule } from './monitoring/monitoring.module';
 import { SentimentModule } from './sentiment/sentiment.module';
 import { FinancialModule } from './financial/financial.module';
 import { NotificationModule } from './notification/notification.module';
+import { MarketWatchModule } from './market-watch/market-watch.module';
+import { SettingsModule } from './settings/settings.module';
+import { CacheModule } from '@nestjs/cache-manager';
+
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -22,6 +25,9 @@ import { NotificationModule } from './notification/notification.module';
         allowUnknown: false, // Validation stricte
         abortEarly: true
       }
+    }),
+    CacheModule.register({
+      isGlobal: true,
     }),
     TypeOrmModule.forRoot({
       type: 'postgres',
@@ -37,7 +43,6 @@ import { NotificationModule } from './notification/notification.module';
     UserModule,
     AuthModule,
     ContentModule,
-    VeilleModule,
     AlertsModule,
     PaymentsModule,
     ReportsModule,
@@ -45,6 +50,8 @@ import { NotificationModule } from './notification/notification.module';
     SentimentModule,
     FinancialModule,
     NotificationModule,
+    MarketWatchModule,
+    SettingsModule,
   ],
 })
 export class AppModule { }

@@ -3,9 +3,10 @@ import { PaymentsService } from './payments.service';
 import { PaymentsController } from './payments.controller';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import Stripe from 'stripe';
+import { JwtModule } from '@nestjs/jwt';
 
 @Module({
-  imports: [ConfigModule],
+  imports: [JwtModule, ConfigModule],
   controllers: [PaymentsController],
   providers: [PaymentsService, {
     provide: 'STRIPE',

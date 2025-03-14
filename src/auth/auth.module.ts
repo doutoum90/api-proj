@@ -14,7 +14,6 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
         if (!secret) {
           throw new Error('JWT_SECRET manquant dans .env !');
         }
-        
         return {
           secret,
           signOptions: { expiresIn: '15m' }
