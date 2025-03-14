@@ -9,6 +9,7 @@ import { RegisterDto } from './dto/register.dto';
 import { ForgotPasswordDto } from './dto/forgot-password.dto';
 import { ResetPasswordDto } from './dto/rest-password.dto';
 import { UpdateUserDto } from '../user/dto/update-user.dto';
+import { Request } from 'express';
 
 @Injectable()
 export class AuthService {
@@ -70,6 +71,8 @@ export class AuthService {
 
   async refresh(request: Request) {
     const token = request.headers['authorization']?.split(' ')[1];
+    if (!token) throw new UnauthorizedException();
+
     const payload = this.jwtService.verify(token, { ignoreExpiration: false });
 
     if (payload.type !== 'refresh') {

@@ -1,34 +1,49 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, UseGuards, Req } from '@nestjs/common';
 import { PaymentsService } from './payments.service';
-import { CreatePaymentDto } from './dto/create-payment.dto';
-import { UpdatePaymentDto } from './dto/update-payment.dto';
+import { CreatePaymentDto, CancelPaymentDto, PaymentStatusDto } from './dto/create-payment.dto';
+import { AuthGuard } from '@nestjs/passport';
+import { Request } from 'express';
 
-@Controller('payments')
+@Controller('api/payments')
 export class PaymentsController {
-  constructor(private readonly paymentsService: PaymentsService) {}
+  constructor(private readonly paymentsService: PaymentsService) { }
 
-  @Post()
-  create(@Body() createPaymentDto: CreatePaymentDto) {
-    return this.paymentsService.create(createPaymentDto);
+
+  @Post('subscribe')
+  @UseGuards(AuthGuard('jwt'))
+  async subscribe(
+    @Body() createPaymentDto: CreatePaymentDto,
+    @Req() req: Request,
+  ) {
+    const userId = (req as any).user['sub'] // Adapté à votre structure JWT
+    return this.paymentsService.subscribe(createPaymentDto, userId);
   }
 
-  @Get()
-  findAll() {
-    return this.paymentsService.findAll();
+
+  @Post('cancel')
+  @UseGuards(AuthGuard('jwt'))
+  async cancelPayment(
+    @Body() cancelPaymentDto: CancelPaymentDto,
+    @Req() req: Request
+  ) {
+    const userId = (req as any).user['sub'];
+    return this.paymentsService.cancelPayment(
+      cancelPaymentDto.paymentId,
+      userId
+    );
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.paymentsService.findOne(+id);
+  @Post('status')
+  @UseGuards(AuthGuard('jwt'))
+  async getPaymentStatus(
+    @Body() paymentStatusDto: PaymentStatusDto,
+    @Req() req: Request
+  ) {
+    const userId = (req as any).user['sub'];
+    return this.paymentsService.getPaymentStatus(
+      paymentStatusDto.paymentId,
+      userId
+    );
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updatePaymentDto: UpdatePaymentDto) {
-    return this.paymentsService.update(+id, updatePaymentDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.paymentsService.remove(+id);
-  }
 }

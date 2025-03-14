@@ -3,7 +3,7 @@ import { CompetitorService } from './competitor.service';
 import { CreateCompetitorDto } from './dto/create-competitor.dto';
 import { UpdateCompetitorDto } from './dto/update-competitor.dto';
 
-@Controller('competitor')
+@Controller('api/competitor')
 export class CompetitorController {
   constructor(private readonly competitorService: CompetitorService) {}
 
