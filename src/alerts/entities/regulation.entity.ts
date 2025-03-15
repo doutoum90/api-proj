@@ -1,25 +1,16 @@
-import { Column, Entity } from "typeorm";
-
-import { PrimaryGeneratedColumn } from "typeorm";
+import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
 
 @Entity()
 export class Regulation {
-    @PrimaryGeneratedColumn()
-    id: number;
+    @PrimaryGeneratedColumn('uuid')
+    id: string;
+
     @Column()
-    name: string;
-    @Column()
+    title: string;
+
+    @Column('text')
     description: string;
+
     @Column()
-    url: string;
-    @Column()
-    image: string; 
-    @Column()
-    date: Date;
-    @Column()
-    status: string;
-    @Column()
-    type: string;
-    
+    effectiveDate: Date;
 }
-    

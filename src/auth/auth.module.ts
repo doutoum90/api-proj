@@ -4,15 +4,21 @@ import { AuthController } from './auth.controller';
 import { JwtModule } from '@nestjs/jwt';
 import { UserModule } from '../user/user.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { JwtAuthGuard } from './jwt-auth.guard';
 
 @Module({
   imports: [
+    ConfigModule,
     JwtModule.registerAsync({
       imports: [ConfigModule],
       useFactory: async (config: ConfigService) => {
         const secret = config.get<string>('JWT_SECRET');
         if (!secret) {
           throw new Error('JWT_SECRET manquant dans .env !');
+        }
+        const refreshSecret = config.get<string>('JWT_REFRESH_SECRET');
+        if (!refreshSecret) {
+          throw new Error('JWT_REFRESH_SECRET manquant dans .env !');
         }
         return {
           secret,
@@ -23,8 +29,8 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
     }),
     forwardRef(() => UserModule),
   ],
-  providers: [AuthService],
+  providers: [AuthService, JwtAuthGuard],
   controllers: [AuthController],
-  exports: [JwtModule],
+  exports: [JwtModule, JwtAuthGuard],
 })
 export class AuthModule { }

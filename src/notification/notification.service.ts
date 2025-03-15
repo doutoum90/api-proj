@@ -10,7 +10,6 @@ interface AlertPayload {
 export class NotificationService {
 
   sendAlert(alert: AlertPayload) {
-    console.log(alert);
   }
 
 }

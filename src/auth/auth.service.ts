@@ -10,12 +10,14 @@ import { ForgotPasswordDto } from './dto/forgot-password.dto';
 import { ResetPasswordDto } from './dto/rest-password.dto';
 import { UpdateUserDto } from '../user/dto/update-user.dto';
 import { Request } from 'express';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class AuthService {
   constructor(
     private readonly userService: UserService,
     private readonly jwtService: JwtService,
+    private readonly configService: ConfigService,
   ) { }
 
   async register(registerDto: RegisterDto): Promise<User> {
@@ -36,8 +38,8 @@ export class AuthService {
     const user = await this.validateUser(loginDto.email, loginDto.password);
     if (!user) throw new UnauthorizedException('Invalid credentials');
     const accessPayload = {
-      email: user.email,
       sub: user.id,
+      email: user.email,
       type: 'access'
     };
 
@@ -47,8 +49,12 @@ export class AuthService {
     };
 
     return {
-      access_token: this.jwtService.sign(accessPayload),
+      access_token: this.jwtService.sign(accessPayload, {
+        secret: this.configService.get<string>('JWT_SECRET'),
+        expiresIn: '15m'
+      }),
       refresh_token: this.jwtService.sign(refreshPayload, {
+        secret: this.configService.get<string>('JWT_REFRESH_SECRET'),
         expiresIn: '7d' // Durée plus longue pour le refresh token
       }),
       user

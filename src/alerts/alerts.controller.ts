@@ -1,8 +1,10 @@
-import { Controller, Get, Post, Body, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Delete, UseGuards } from '@nestjs/common';
 import { AlertsService } from './alerts.service';
 import { CreateAlertDto } from './dto/create-alert.dto';
+import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 
-@Controller('/api')
+@Controller('api')
+@UseGuards(JwtAuthGuard)
 export class AlertsController {
   constructor(private readonly alertsService: AlertsService) { }
 
@@ -21,7 +23,7 @@ export class AlertsController {
     return this.alertsService.unsubscribe(createAlertDto);
   }
 
-  @Delete('/alerts/regulations')
+  @Get('/regulations')
   getAllRegulations() {
     return this.alertsService.getAllRegulations();
   }

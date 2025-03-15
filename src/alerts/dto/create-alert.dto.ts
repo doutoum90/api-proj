@@ -1,5 +1,5 @@
 export class CreateAlertDto {
-    id: number;
+    id: string;
     email: string;
     regulation: string;
 }
