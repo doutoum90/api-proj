@@ -12,5 +12,14 @@ export class Regulation {
     description: string;
 
     @Column()
+    status: string;
+
+    @Column()
+    department: string;
+
+    @Column()
     effectiveDate: Date;
+
+    @Column()
+    category: string;
 }

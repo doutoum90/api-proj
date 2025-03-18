@@ -37,26 +37,13 @@ export class AuthService {
   async login(loginDto: LoginDto): Promise<{ access_token: string, refresh_token: string, user: User }> {
     const user = await this.validateUser(loginDto.email, loginDto.password);
     if (!user) throw new UnauthorizedException('Invalid credentials');
-    const accessPayload = {
-      sub: user.id,
-      email: user.email,
-      type: 'access'
-    };
-
-    const refreshPayload = {
-      sub: user.id,
-      type: 'refresh'
-    };
+    const accessPayload = {email: user.email, sub: user.id, type: 'access' };
+    const refreshPayload = {sub: user.id, type: 'refresh' };
+    const accessToken = this.jwtService.sign(accessPayload);
 
     return {
-      access_token: this.jwtService.sign(accessPayload, {
-        secret: this.configService.get<string>('JWT_SECRET'),
-        expiresIn: '15m'
-      }),
-      refresh_token: this.jwtService.sign(refreshPayload, {
-        secret: this.configService.get<string>('JWT_REFRESH_SECRET'),
-        expiresIn: '7d' // Durée plus longue pour le refresh token
-      }),
+      access_token: accessToken,
+      refresh_token: this.jwtService.sign(refreshPayload, { expiresIn: '7d' }),
       user
     };
   }

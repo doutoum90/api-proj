@@ -6,6 +6,7 @@ import { FinancialModule } from 'src/financial/financial.module';
 import { NotificationModule } from 'src/notification/notification.module';
 import { SentimentModule } from 'src/sentiment/sentiment.module';
 import { ReportService } from './services/report.service';
+import { JwtService } from '@nestjs/jwt';
 
 @Module({
   imports: [
@@ -14,7 +15,7 @@ import { ReportService } from './services/report.service';
     NotificationModule,
     TypeOrmModule.forFeature([Report])],
   controllers: [ReportsController],
-  providers: [ReportService],
+  providers: [ReportService,  JwtService],
   exports: [ReportService],
 })
 export class ReportsModule { }
