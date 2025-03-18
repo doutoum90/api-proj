@@ -1,27 +1,15 @@
 import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
 
 @Entity()
-export class MarketTrend {
+export class MarketShare {
   @PrimaryGeneratedColumn()
   id: number;
 
   @Column()
-  keyword: string;
+  competitor: string;
 
-  @Column()
-  trendScore: number;
-
-  @Column()
-  period: string;
-
-  @Column()
-  region: string;
-
-  @Column()
-  date: Date;
-
-  @Column('jsonb')
-  trendData: Record<string, any>;
+  @Column('float')
+  sharePercentage: number;
 
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   timestamp: Date;
