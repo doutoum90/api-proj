@@ -5,6 +5,8 @@ import { LoginDto } from './dto/login.dto';
 import { ForgotPasswordDto } from './dto/forgot-password.dto';
 import { ResetPasswordDto } from './dto/rest-password.dto';
 import { Request } from 'express';
+import { LoginResponseDto } from './dto/login-response.dto';
+
 
 @Controller('api/auth')
 export class AuthController {
@@ -16,7 +18,7 @@ export class AuthController {
   }
 
   @Post('login')
-  async login(@Body() loginDto: LoginDto) {
+  async login(@Body() loginDto: LoginDto): Promise<LoginResponseDto> {
     return this.authService.login(loginDto);
   }
 

@@ -6,7 +6,7 @@ export class RegisterDto {
     lastname: string;
     dateOfBirth: string;
     profession: string;
-    skills: string[];
-    typeAbonnement: string[];
+    typeAbonnement: 'Essentiel' | 'PRO' | 'Expert';
+    trialActive: boolean;
   }
   

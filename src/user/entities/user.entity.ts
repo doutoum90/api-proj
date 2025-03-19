@@ -27,14 +27,20 @@ export class User {
   lastname?: string;
 
   @Column({ nullable: true })
+  dateOfBirth?: string;
+
+  @Column({ nullable: true })
   profession?: string;
-
-  @Column({ type: 'simple-array', nullable: true })
-  skills?: string[];
-
-  @Column({ type: 'simple-array', nullable: true })
-  typeAbonnement?: string[];
 
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   createdAt: Date;
+
+  @Column({ type: 'enum', enum: ['Essentiel', 'PRO', 'Expert'], default: 'Essentiel' })
+  typeAbonnement: 'Essentiel' | 'PRO' | 'Expert';
+
+  @Column({ type: 'timestamp', nullable: true })
+  trialStartDate?: Date; // Date de début de la période d'essai
+
+  @Column({ default: true })
+  trialActive: boolean;
 }

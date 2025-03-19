@@ -8,6 +8,7 @@ import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 @Controller('api/payments')
 @UseGuards(JwtAuthGuard)
 export class PaymentsController {
+  FRONT_URL = 'http://localhost:5173'
   constructor(private readonly paymentsService: PaymentsService) { }
 
   @Post('subscribe')
@@ -29,5 +30,29 @@ export class PaymentsController {
   async getPaymentStatus(@Body() paymentStatusDto: PaymentStatusDto, @Req() req: Request) {
     const userId = (req as any).user['sub'];
     return this.paymentsService.getStatus(userId);
+  }
+
+  @Post('create-checkout-session')
+  async createCheckoutSession(@Req() req, @Body() body: { plan: 'Essentiel' | 'PRO' | 'Expert' }) {
+    const stripe = require('stripe')('your_stripe_secret_key');
+    const priceMap = { Essentiel: 2900, PRO: 5900, Expert: 9900 }; // En centimes
+
+    const session = await stripe.checkout.sessions.create({
+      payment_method_types: ['card'],
+      line_items: [{
+        price_data: {
+          currency: 'eur',
+          product_data: { name: body.plan },
+          unit_amount: priceMap[body.plan],
+        },
+        quantity: 1,
+      }],
+      mode: 'subscription',
+      success_url: `${this.FRONT_URL}/success`,
+      cancel_url: `${this.FRONT_URL}/cancel`,
+      metadata: { userId: req.user.sub },
+    });
+
+    return { sessionId: session.id };
   }
 }
