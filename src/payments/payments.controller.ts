@@ -1,48 +1,72 @@
-import { Controller, Get, Post, Body, UseGuards, Req, HttpCode, HttpStatus } from '@nestjs/common';
+import { Controller, Get, Post, Body, UseGuards, Req, HttpCode, HttpStatus, Inject } from '@nestjs/common';
 import { PaymentsService } from './payments.service';
 import { CreatePaymentDto, CancelPaymentDto, PaymentStatusDto } from './dto/create-payment.dto';
-
 import { Request } from 'express';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
+import Stripe from 'stripe';
 
 @Controller('api/payments')
 @UseGuards(JwtAuthGuard)
 export class PaymentsController {
   FRONT_URL = 'http://localhost:5173'
-  constructor(private readonly paymentsService: PaymentsService) { }
+  constructor(
+    private readonly paymentsService: PaymentsService,
+    @Inject('STRIPE') private stripe: Stripe,
+  ) { }
 
   @Post('subscribe')
   @HttpCode(HttpStatus.OK)
   async subscribe(@Body() createPaymentDto: CreatePaymentDto, @Req() req: Request) {
     const userId = (req as any).user['sub'];
-    try {
-      return await this.paymentsService.subscribe(userId, createPaymentDto.priceID);
-    } catch (error) {
-      console.error('Subscribe error:', error.message);
-      throw error;
+    const subscription = await this.paymentsService.subscribe(userId, createPaymentDto.priceID);
+    if (createPaymentDto.paymentMethodId) {
+      await this.stripe.paymentMethods.attach(createPaymentDto.paymentMethodId, { customer: subscription.customer as string });
+      await this.stripe.subscriptions.update(subscription.id, { default_payment_method: createPaymentDto.paymentMethodId });
     }
+    return { subscriptionId: subscription.id, status: subscription.status };
+  }
+
+  @Post('upgrade-downgrade')
+  @HttpCode(HttpStatus.OK)
+  async upgradeDowngrade(@Body('newPriceId') newPriceId: string, @Req() req: Request) {
+    const userId = (req as any).user['sub'];
+    const subscription = await this.paymentsService.upgradeDowngradeSubscription(userId, newPriceId);
+    return { subscriptionId: subscription.id, status: subscription.status };
+  }
+
+  @Get('history')
+  @HttpCode(HttpStatus.OK)
+  async getPaymentHistory(@Req() req: Request) {
+    const userId = (req as any).user['sub'];
+    return this.paymentsService.getPaymentHistory(userId);
+  }
+
+  @Get('next-payment')
+  @HttpCode(HttpStatus.OK)
+  async getNextPayment(@Req() req: Request) {
+    const userId = (req as any).user['sub'];
+    return this.paymentsService.getNextPayment(userId);
   }
 
   @Post('cancel')
   @HttpCode(HttpStatus.OK)
-  async cancelPayment(@Body() cancelPaymentDto: CancelPaymentDto, @Req() req: Request) {
+  async cancelPayment(@Req() req: Request) {
     const userId = (req as any).user['sub'];
     return this.paymentsService.cancel(userId);
   }
 
   @Get('status')
   @HttpCode(HttpStatus.OK)
-  async getPaymentStatus(@Body() paymentStatusDto: PaymentStatusDto, @Req() req: Request) {
+  async getPaymentStatus(@Req() req: Request) {
     const userId = (req as any).user['sub'];
     return this.paymentsService.getStatus(userId);
   }
 
   @Post('create-checkout-session')
-  async createCheckoutSession(@Req() req, @Body() body: { plan: 'Essentiel' | 'PRO' | 'Expert' }) {
-    const stripe = require('stripe')('your_stripe_secret_key');
+  async createCheckoutSession(@Req() req: Request, @Body() body: { plan: 'Essentiel' | 'PRO' | 'Expert' }) {
     const priceMap = { Essentiel: 2900, PRO: 5900, Expert: 9900 }; // En centimes
 
-    const session = await stripe.checkout.sessions.create({
+    const session = await this.stripe.checkout.sessions.create({
       payment_method_types: ['card'],
       line_items: [{
         price_data: {
@@ -55,7 +79,7 @@ export class PaymentsController {
       mode: 'subscription',
       success_url: `${this.FRONT_URL}/success`,
       cancel_url: `${this.FRONT_URL}/cancel`,
-      metadata: { userId: req.user.sub },
+      metadata: { userId: (req as any).user['sub'] },
     });
 
     return { sessionId: session.id };

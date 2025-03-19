@@ -5,11 +5,13 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import Stripe from 'stripe';
 import { JwtModule } from '@nestjs/jwt';
 import { StripeWebhookController } from './webhooks.controller';
+import { UserModule } from '../user/user.module';
 
 @Module({
   imports: [
     JwtModule,
-    ConfigModule
+    ConfigModule,
+    UserModule
   ],
   controllers: [
     PaymentsController,

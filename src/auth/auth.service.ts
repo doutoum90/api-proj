@@ -79,7 +79,7 @@ export class AuthService {
     // Envoyer l'email avec le token ici
   }
 
-  async resetPassword(resetPasswordDto: ResetPasswordDto): Promise<UpdateUserDto> {
+  async resetPassword(resetPasswordDto: ResetPasswordDto) {
     const { token, newPassword } = resetPasswordDto;
     const payload = this.jwtService.verify(token);
     const hashedPassword = await bcrypt.hash(newPassword, 10);

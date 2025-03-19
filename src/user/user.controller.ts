@@ -1,5 +1,5 @@
 // user.controller.ts
-import { Controller, Get, Put, Delete, UseGuards, Req, Body, NotFoundException } from '@nestjs/common';
+import { Controller, Get, Put, Delete, UseGuards, Req, Body, NotFoundException, HttpCode, HttpStatus } from '@nestjs/common';
 import { UserService } from './user.service';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -8,7 +8,7 @@ import { UpdateSubscriptionDto } from './dto/update-subscription-dto';
 @Controller('api/user')
 @UseGuards(JwtAuthGuard)
 export class UserController {
-  constructor(private readonly userService: UserService) {}
+  constructor(private readonly userService: UserService) { }
 
   @Get('profile')
   async getProfile(@Req() req) {
@@ -38,6 +38,14 @@ export class UserController {
     const daysLeft = isActive ? Math.ceil((trialEndDate.getTime() - now.getTime()) / (1000 * 60 * 60 * 24)) : 0;
 
     return { isActive, daysLeft };
+  }
+
+
+  @Put()
+  @HttpCode(HttpStatus.OK)
+  async updateSettings(@Req() req, @Body() updateUserDto: UpdateUserDto) {
+    const userId = req.user.sub;
+    return this.userService.updateUser(userId, updateUserDto);
   }
 
   @Put('subscription')

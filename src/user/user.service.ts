@@ -1,10 +1,11 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UpdateSubscriptionDto } from './dto/update-subscription-dto';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class UserService {
@@ -37,12 +38,22 @@ export class UserService {
   async getProfile(id: number) {
     return await this.userRepository.findOne({ where: { id } });
   }
-  async updateUser(id: number, updateUserDto: UpdateUserDto) {
-    return await this.userRepository.update(id, updateUserDto);
+  async updateSubscription(userId: number, updateSubscriptionDto: UpdateSubscriptionDto): Promise<User> {
+    const user = await this.userRepository.findOne({ where: { id: userId } });
+    if (!user) throw new NotFoundException('User not found');
+    user.typeAbonnement = updateSubscriptionDto.typeAbonnement;
+    return this.userRepository.save(user);
   }
 
-  async updateSubscription(id: number, updateSubscriptionDto: UpdateSubscriptionDto) {
-    return await this.userRepository.update(id, updateSubscriptionDto);
+  async updateUser(userId: number, updateUserDto: UpdateUserDto): Promise<User> {
+    const user = await this.userRepository.findOne({ where: { id: userId } });
+    if (!user) throw new NotFoundException('User not found');
+
+    if (updateUserDto.email) user.email = updateUserDto.email;
+    if (updateUserDto.name) user.name = updateUserDto.name;
+    if (updateUserDto.password) user.password = await bcrypt.hash(updateUserDto.password, 10);
+
+    return this.userRepository.save(user);
   }
 
 }
