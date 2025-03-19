@@ -15,7 +15,12 @@ export class PaymentsController {
   @HttpCode(HttpStatus.OK)
   async subscribe(@Body() createPaymentDto: CreatePaymentDto, @Req() req: Request) {
     const userId = (req as any).user['sub'];
-    return this.paymentsService.subscribe(userId, createPaymentDto.priceID);
+    try {
+      return await this.paymentsService.subscribe(userId, createPaymentDto.priceID);
+    } catch (error) {
+      console.error('Subscribe error:', error.message);
+      throw error;
+    }
   }
 
   @Post('cancel')

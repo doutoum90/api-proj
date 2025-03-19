@@ -7,9 +7,8 @@ export class CreatePaymentDto {
 
   @IsString()
   @IsNotEmpty()
-  planId: string;
+  priceID: string;
 
-  @IsNumber()
   @IsNotEmpty()
   amount: number;
 
@@ -19,14 +18,14 @@ export class CreatePaymentDto {
 
   @IsString()
   @IsNotEmpty()
-  priceID: string;
+  planId: string;
 }
 
 
 export class CancelPaymentDto {
   @IsString()
   @IsNotEmpty()
-  paymentId: string; // ID Stripe (payment_intent ou subscription)
+  paymentId: string;
 }
 
 export class PaymentStatusDto {
