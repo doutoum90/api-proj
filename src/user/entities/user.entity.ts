@@ -43,4 +43,7 @@ export class User {
 
   @Column({ default: true })
   trialActive: boolean;
+
+  @Column({ nullable: true })
+  avatar?: string;
 }

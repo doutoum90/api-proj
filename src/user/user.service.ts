@@ -55,5 +55,17 @@ export class UserService {
 
     return this.userRepository.save(user);
   }
+  async updateAvatar(userId: number, avatarUrl: string): Promise<User> {
+    const user = await this.userRepository.findOne({ where: { id: userId } });
+    if (!user) throw new NotFoundException('User not found');
+    user.avatar = avatarUrl;
+    return this.userRepository.save(user);
+  }
+
+  async getAvatar(userId: number): Promise<string | null> {
+    const user = await this.userRepository.findOne({ where: { id: userId } });
+    if (!user) throw new NotFoundException('User not found');
+    return user.avatar || null;
+  }
 
 }
