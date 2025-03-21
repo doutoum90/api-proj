@@ -1,6 +1,6 @@
 import { ForbiddenException, Inject, Injectable, Logger, NotFoundException } from '@nestjs/common';
 import Stripe from 'stripe';
-import { UserService } from '../user/user.service';
+import { UserService } from '../../user/user.service';
 
 @Injectable()
 export class PaymentsService {
@@ -128,6 +128,6 @@ export class PaymentsService {
       'price_1R4NJCQMk6qRSmo112OpuuEU': 'PRO',
       'price_1R4NKMQMk6qRSmo1CObfbfsU': 'Expert',
     };
-    return priceMap[priceId] || 'Essentiel'; // Par défaut
+    return priceMap[priceId] || 'Essentiel'; 
   }
 }

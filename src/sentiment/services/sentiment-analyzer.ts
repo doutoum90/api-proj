@@ -10,6 +10,6 @@ export class SentimentAnalyzer {
     }
 
     getMagnitude(text: string): number {
-        return text.split(/\W+/).length / 100; // Normalisation
+        return text.split(/\W+/).length / 100;
     }
 }

@@ -1,13 +1,13 @@
 import { Controller, Get, Post, Delete, Body, Param, UseGuards, Query } from '@nestjs/common';
 import { ApiOperation } from '@nestjs/swagger';
-import { AddCompetitorDto } from './dto/add-competitor.dto';
+import { AddCompetitorDto } from '../dto/add-competitor.dto';
 import { ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
-import { MarketWatchService } from './services/market-watch.service';
-import { PeriodQueryDto } from './dto/period-query.dto';
-import { MarketTrend } from './entities/market-trend.entity';
-import { MarketShare } from './entities/market-share.entity';
-import { MarketPrice } from './entities/market-Price.entity';
+import { MarketWatchService } from '../services/market-watch.service';
+import { PeriodQueryDto } from '../dto/period-query.dto';
+import { MarketTrend } from '../entities/market-trend.entity';
+import { MarketShare } from '../entities/market-share.entity';
+import { MarketPrice } from '../entities/market-Price.entity';
 
 @ApiTags('Veille - Concurrents')
 @Controller('api/veille/competitors')

@@ -5,13 +5,7 @@ import * as bodyParser from 'body-parser';
 
 dotenv.config();
 async function bootstrap() {
-  /* const app = await NestFactory.create(AppModule, {
-    rawBody: true,
-  });
-
-  app.use(bodyParser.raw({ type: 'application/json' })); */
   const app = await NestFactory.create(AppModule);
-  // Ajout de CORS
   const cors = require('cors');
 
   app.enableCors({

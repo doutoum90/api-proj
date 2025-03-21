@@ -19,6 +19,3 @@ export class TwitterService {
         return data.data.map(tweet => tweet.text);
     }
 }
-
-
-// Ajout de la méthode manquante dans SentimentService

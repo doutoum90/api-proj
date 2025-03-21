@@ -39,7 +39,7 @@ export class User {
   typeAbonnement: 'Essentiel' | 'PRO' | 'Expert';
 
   @Column({ type: 'timestamp', nullable: true })
-  trialStartDate?: Date; // Date de début de la période d'essai
+  trialStartDate?: Date;
 
   @Column({ default: true })
   trialActive: boolean;

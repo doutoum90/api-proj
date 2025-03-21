@@ -1,7 +1,7 @@
-import { Injectable } from "@nestjs/common";
-import { TwitterService } from "./twitter.service";
-import { RedditService } from "./reddit.service";
-import { SentimentAnalyzer } from "./sentiment-analyzer";
+import { Injectable } from '@nestjs/common';
+import { TwitterService } from './twitter.service';
+import { RedditService } from './reddit.service';
+import { SentimentAnalyzer } from './sentiment-analyzer';
 
 
 @Injectable()
@@ -33,6 +33,6 @@ export class SentimentService {
   private calculateOverallScore(tweets: any[], redditPosts: any[]): number {
     const twitterScore = tweets.reduce((sum, t) => sum + t.score, 0) / tweets.length || 0;
     const redditScore = redditPosts.reduce((sum, p) => sum + p.score, 0) / redditPosts.length || 0;
-    return (twitterScore * 0.6 + redditScore * 0.4) * 100; // Score sur 100
+    return (twitterScore * 0.6 + redditScore * 0.4) * 100;
   }
 }

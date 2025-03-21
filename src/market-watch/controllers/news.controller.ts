@@ -1,7 +1,7 @@
 import { Controller, Get, Query } from '@nestjs/common';
 import { ApiOperation, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { NewsService } from './services/news.service';
-import { NewsItemDto } from './dto/news-item.dto';
+import { NewsService } from '../services/news.service';
+import { NewsItemDto } from '../dto/news-item.dto';
 
 @ApiTags('Veille')
 @Controller('api/veille')

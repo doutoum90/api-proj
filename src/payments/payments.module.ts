@@ -1,10 +1,9 @@
 import { Module } from '@nestjs/common';
-import { PaymentsService } from './payments.service';
+import { PaymentsService } from './services/payments.service';
 import { PaymentsController } from './payments.controller';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import Stripe from 'stripe';
 import { JwtModule } from '@nestjs/jwt';
-import { StripeWebhookController } from './webhooks.controller';
 import { UserModule } from '../user/user.module';
 
 @Module({
@@ -15,7 +14,6 @@ import { UserModule } from '../user/user.module';
   ],
   controllers: [
     PaymentsController,
-    StripeWebhookController
   ],
   providers: [
     PaymentsService,

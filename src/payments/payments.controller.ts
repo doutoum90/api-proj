@@ -1,6 +1,6 @@
 import { Controller, Get, Post, Body, UseGuards, Req, HttpCode, HttpStatus, Inject } from '@nestjs/common';
-import { PaymentsService } from './payments.service';
-import { CreatePaymentDto, CancelPaymentDto, PaymentStatusDto } from './dto/create-payment.dto';
+import { PaymentsService } from './services/payments.service';
+import { CreatePaymentDto } from './dto/create-payment.dto';
 import { Request } from 'express';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import Stripe from 'stripe';
@@ -8,11 +8,11 @@ import Stripe from 'stripe';
 @Controller('api/payments')
 @UseGuards(JwtAuthGuard)
 export class PaymentsController {
-  FRONT_URL = 'http://localhost:5173'
+  FRONT_URL = 'http://localhost:5173';
   constructor(
     private readonly paymentsService: PaymentsService,
     @Inject('STRIPE') private stripe: Stripe,
-  ) { }
+  ) {}
 
   @Post('subscribe')
   @HttpCode(HttpStatus.OK)

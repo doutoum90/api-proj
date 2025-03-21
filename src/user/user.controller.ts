@@ -83,6 +83,13 @@ export class UserController {
     return this.userService.updateUser(userId, updateUserDto);
   }
 
+  @Get()
+  @HttpCode(HttpStatus.OK)
+  async getUser(@Req() req) {
+    const userId = req.user.sub;
+    return await this.userService.findById(userId)
+  }
+
   @Put('subscription')
   async updateSubscription(@Req() req, @Body() updateSubscriptionDto: UpdateSubscriptionDto) {
     return this.userService.updateSubscription(req.user.sub, updateSubscriptionDto);
