@@ -16,7 +16,7 @@ export class ScrapingService {
       console.log('data', data);
       this.logger.log(`Scraped data from ${url}`);
       return data;
-    } catch (error) {
+    } catch (error: any) {
       this.logger.error(`Scraping failed: ${error.message}`);
       throw error;
     }
