@@ -11,6 +11,12 @@ import { SentimentModule } from './sentiment/sentiment.module';
 import { FinancialModule } from './financial/financial.module';
 import { MarketWatchModule } from './market-watch/market-watch.module';
 import { CacheModule } from '@nestjs/cache-manager';
+import { ScrapingModule } from './scraping/scraping.module';
+import { ApiModule } from './api/api.module';
+import { StorageModule } from './storage/storage.module';
+import { AnalysisModule } from './analysis/analysis.module';
+import { NotificationsModule } from './notifications/notifications.module';
+import { ScheduleModule } from '@nestjs/schedule';
 
 @Module({
   imports: [
@@ -36,6 +42,7 @@ import { CacheModule } from '@nestjs/cache-manager';
       synchronize: process.env.NODE_ENV !== 'production',
       logging: process.env.NODE_ENV !== 'production',
     }),
+    ScheduleModule.forRoot(),
     UserModule,
     AuthModule,
     ContentModule,
@@ -45,6 +52,11 @@ import { CacheModule } from '@nestjs/cache-manager';
     SentimentModule,
     FinancialModule,
     MarketWatchModule,
+    ScrapingModule,
+    ApiModule,
+    StorageModule,
+    AnalysisModule,
+    NotificationsModule,
   ],
 })
 export class AppModule { }
