@@ -2,9 +2,13 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import * as dotenv from 'dotenv';
 import { ValidationPipe } from '@nestjs/common';
+import { Logger } from '@nestjs/common';
+
+const logger = new Logger('Bootstrap');
 
 dotenv.config();
 async function bootstrap() {
+  logger.log('Démarrage de l’application...');
   const app = await NestFactory.create(AppModule);
 
   app.enableCors({
@@ -19,6 +23,11 @@ async function bootstrap() {
     transform: true,
   }));
 
-  await app.listen(process.env.PORT ?? 3000);
+  const port = process.env.PORT || 3000;
+  logger.log(`Tentative de liaison au port ${port}...`);
+  await app.listen(port);
+  logger.log(`Application démarrée sur le port ${port}`);
 }
-bootstrap();
+bootstrap().catch((error) => {
+  logger.error('Erreur lors du démarrage', error);
+});
