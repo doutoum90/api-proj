@@ -1,5 +1,5 @@
 import { MigrationInterface, QueryRunner } from "typeorm";
-import bcrypt from 'bcrypt';
+import * as bcrypt from 'bcrypt';
 
 
 export class SeedInitialData1699999999999 implements MigrationInterface {

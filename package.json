@@ -1,8 +1,8 @@
 {
   "name": "api-proj",
   "version": "0.0.1",
-  "description": "",
-  "author": "",
+  "description": "API pour le projet de gestion de contenu",
+  "author": "Annour",
   "private": true,
   "license": "UNLICENSED",
   "scripts": {
@@ -19,7 +19,8 @@
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
     "start:dev:docker": "docker compose up -d && npm run start:dev",
-    "typeorm migration:generate": "typeorm migration:generate ./src/migrations/SeedInitialData -d ./src/data-source.ts -n SeedInitialData",
+    "typeorm": "ts-node -r tsconfig-paths/register ./node_modules/typeorm/cli.js -d ./src/data-source.ts",
+    "typeorm:migration:generate:old": "typeorm migration:generate ./src/migrations/SeedInitialData -d ./src/data-source.ts -n SeedInitialData",
     "fillbdd": "ts-node -r tsconfig-paths/register ./node_modules/typeorm/cli.js migration:generate ./src/migrations/SeedInitialData -d ./src/data-source.ts"
   },
   "dependencies": {
@@ -68,6 +69,7 @@
     "@nestjs/testing": "^11.0.1",
     "@swc/cli": "^0.6.0",
     "@swc/core": "^1.10.7",
+    "@types/bcrypt": "^5.0.2",
     "@types/express": "^5.0.1",
     "@types/jest": "^29.5.14",
     "@types/node": "^22.10.7",

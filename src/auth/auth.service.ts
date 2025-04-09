@@ -122,10 +122,10 @@ export class AuthService {
 
   private async validateUser(email: string, password: string): Promise<User> {
     const user = await this.userService.findByEmail(email);
-    if (user && await bcrypt.compare(password, user.password)) {
-      return user;
+    if (!user || !(await bcrypt.compare(password, user.password))) {
+      throw new UnauthorizedException('Invalid credentials');
     }
-    throw new Error('Invalid credentials');
+    return user;
   }
   private checkTrialPeriod(user: User): { isActive: boolean; isSubscribed: boolean } {
     const now = new Date();

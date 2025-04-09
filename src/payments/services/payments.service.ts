@@ -11,113 +11,144 @@ export class PaymentsService {
     private readonly userService: UserService
   ) { }
 
-  async subscribe(customerId: string, priceId: string): Promise<Stripe.Subscription> {
+  async subscribe(userId: number, priceId: string): Promise<Stripe.Subscription> {
     try {
       if (!priceId || typeof priceId !== 'string' || !priceId.startsWith('price_')) {
         throw new Error('Invalid or missing priceId');
       }
-      const customer = await this.stripe.customers.create({ metadata: { customerId } });
-      this.logger.log(`Creating subscription for customer ${customer.id} with price ${priceId}`);
+
+      const user = await this.userService.findById(userId);
+      if (!user) throw new NotFoundException('User not found');
+
+      let customerId = user.stripeCustomerId;
+      let customer: Stripe.Customer | Stripe.DeletedCustomer;
+
+      if (customerId) {
+        customer = await this.stripe.customers.retrieve(customerId);
+        if ('deleted' in customer && customer.deleted) {
+          customerId = undefined;
+        }
+      }
+
+      if (!customerId) {
+        const newCustomer = await this.stripe.customers.create({
+          email: user.email,
+          name: `${user.name} ${user.lastname}`,
+          metadata: { userId: user.id.toString() },
+        });
+        customerId = newCustomer.id;
+        await this.userService.updateUser(userId, { stripeCustomerId: customerId });
+      }
+
+      this.logger.log(`Creating subscription for customer ${customerId} (User ID: ${userId}) with price ${priceId}`);
+
       const subscription = await this.stripe.subscriptions.create({
-        customer: customer.id,
+        customer: customerId,
         items: [{ price: priceId }],
         payment_behavior: 'default_incomplete',
+        expand: ['latest_invoice.payment_intent'],
       });
-      await this.userService.updateSubscription(parseInt(customerId), { typeAbonnement: this.getPlanNameFromPriceId(priceId) });
+
+      await this.userService.updateSubscription(userId, { typeAbonnement: this.getPlanNameFromPriceId(priceId) });
       return subscription;
     } catch (error) {
-      this.logger.error(`Failed to create subscription: ${error.message}`, error.stack);
+      this.logger.error(`Failed to create subscription for User ID ${userId}: ${error.message}`, error.stack);
       throw new ForbiddenException(`Failed to create subscription: ${error.message}`);
     }
   }
-  async upgradeDowngradeSubscription(customerId: string, newPriceId: string): Promise<Stripe.Subscription> {
+
+  async upgradeDowngradeSubscription(userId: number, newPriceId: string): Promise<Stripe.Subscription> {
     try {
-      const customer = await this.stripe.customers.search({ query: `metadata['customerId']:'${customerId}'` });
-      if (!customer.data.length) throw new NotFoundException('Customer not found');
+      const user = await this.userService.findById(userId);
+      if (!user || !user.stripeCustomerId) throw new NotFoundException('User or Stripe customer not found');
+      const customerId = user.stripeCustomerId;
 
-      const subscriptions = await this.stripe.subscriptions.list({ customer: customer.data[0].id });
+      const subscriptions = await this.stripe.subscriptions.list({ customer: customerId, status: 'active', limit: 1 });
       if (!subscriptions.data.length) throw new NotFoundException('No active subscription found');
-
       const subscription = subscriptions.data[0];
+
       const updatedSubscription = await this.stripe.subscriptions.update(subscription.id, {
         items: [{ id: subscription.items.data[0].id, price: newPriceId }],
-        proration_behavior: 'create_prorations', // Ajuste les coûts au prorata
+        proration_behavior: 'create_prorations',
+        expand: ['latest_invoice.payment_intent'],
       });
 
-      await this.userService.updateSubscription(parseInt(customerId), { typeAbonnement: this.getPlanNameFromPriceId(newPriceId) });
+      await this.userService.updateSubscription(userId, { typeAbonnement: this.getPlanNameFromPriceId(newPriceId) });
       return updatedSubscription;
     } catch (error) {
-      this.logger.error(`Failed to update subscription: ${error.message}`, error.stack);
+      this.logger.error(`Failed to update subscription for User ID ${userId}: ${error.message}`, error.stack);
       throw new ForbiddenException(`Failed to update subscription: ${error.message}`);
     }
   }
 
-  async getPaymentHistory(customerId: string): Promise<Stripe.Invoice[]> {
+  async getPaymentHistory(userId: number): Promise<Stripe.Invoice[]> {
     try {
-      const customer = await this.stripe.customers.search({ query: `metadata['customerId']:'${customerId}'` });
-      if (!customer.data.length) throw new NotFoundException('Customer not found');
+      const user = await this.userService.findById(userId);
+      if (!user || !user.stripeCustomerId) throw new NotFoundException('User or Stripe customer not found');
+      const customerId = user.stripeCustomerId;
 
-      const invoices = await this.stripe.invoices.list({ customer: customer.data[0].id });
+      const invoices = await this.stripe.invoices.list({ customer: customerId });
       return invoices.data;
     } catch (error) {
-      this.logger.error(`Failed to get payment history: ${error.message}`, error.stack);
+      this.logger.error(`Failed to get payment history for User ID ${userId}: ${error.message}`, error.stack);
       throw new ForbiddenException('Failed to get payment history');
     }
   }
 
-  async getNextPayment(customerId: string): Promise<{ nextPaymentDate: number; amount: number } | null> {
+  async getNextPayment(userId: number): Promise<{ nextPaymentDate: number; amount: number } | null> {
     try {
-      const customer = await this.stripe.customers.search({ query: `metadata['customerId']:'${customerId}'` });
-      if (!customer.data.length) throw new NotFoundException('Customer not found');
+      const user = await this.userService.findById(userId);
+      if (!user || !user.stripeCustomerId) throw new NotFoundException('User or Stripe customer not found');
+      const customerId = user.stripeCustomerId;
 
-      const subscriptions = await this.stripe.subscriptions.list({ customer: customer.data[0].id });
+      const subscriptions = await this.stripe.subscriptions.list({ customer: customerId, status: 'active', limit: 1 });
       if (!subscriptions.data.length) return null;
-
       const subscription = subscriptions.data[0];
       return {
         nextPaymentDate: subscription.current_period_end,
         amount: subscription.items.data[0].price.unit_amount || 0,
       };
     } catch (error) {
-      this.logger.error(`Failed to get next payment: ${error.message}`, error.stack);
+      this.logger.error(`Failed to get next payment for User ID ${userId}: ${error.message}`, error.stack);
       throw new ForbiddenException('Failed to get next payment');
     }
   }
 
-  async cancel(customerId: string): Promise<Stripe.Subscription> {
+  async cancel(userId: number): Promise<Stripe.Subscription> {
     try {
-      const customer = await this.stripe.customers.search({ query: `metadata['customerId']:'${customerId}'` });
-      if (!customer.data.length) throw new NotFoundException('Customer not found');
+      const user = await this.userService.findById(userId);
+      if (!user || !user.stripeCustomerId) throw new NotFoundException('User or Stripe customer not found');
+      const customerId = user.stripeCustomerId;
 
-      const subscriptions = await this.stripe.subscriptions.list({ customer: customer.data[0].id });
-      if (!subscriptions.data.length) throw new NotFoundException('No subscription found');
+      const subscriptions = await this.stripe.subscriptions.list({ customer: customerId, status: 'active', limit: 1 });
+      if (!subscriptions.data.length) throw new NotFoundException('No active subscription found');
 
       const cancelledSubscription = await this.stripe.subscriptions.cancel(subscriptions.data[0].id);
-      await this.userService.updateSubscription(parseInt(customerId), { typeAbonnement: 'Essentiel' }); // Par défaut après annulation
+      await this.userService.updateSubscription(userId, { typeAbonnement: 'Essentiel' });
       return cancelledSubscription;
     } catch (error) {
-      this.logger.error(`Failed to cancel subscription: ${error.message}`, error.stack);
+      this.logger.error(`Failed to cancel subscription for User ID ${userId}: ${error.message}`, error.stack);
       throw error instanceof NotFoundException ? error : new ForbiddenException('Failed to cancel subscription');
     }
   }
 
-  async getStatus(customerId: string): Promise<{ status: string }> {
+  async getStatus(userId: number): Promise<{ status: string }> {
     try {
-      const customer = await this.stripe.customers.search({
-        query: `metadata['customerId']:'${customerId}'`,
-      });
-
-      if (!customer.data.length) {
-        return { status: 'no_subscription' };
+      const user = await this.userService.findById(userId);
+      if (!user || !user.stripeCustomerId) {
+        return { status: 'no_customer' };
       }
+      const customerId = user.stripeCustomerId;
 
       const subscriptions = await this.stripe.subscriptions.list({
-        customer: customer.data[0].id,
+        customer: customerId,
+        status: 'active',
+        limit: 1
       });
 
       return { status: subscriptions.data[0]?.status || 'no_subscription' };
     } catch (error) {
-      this.logger.error(`Failed to get subscription status: ${error.message}`);
+      this.logger.error(`Failed to get subscription status for User ID ${userId}: ${error.message}`);
       throw new ForbiddenException('Failed to get subscription status');
     }
   }

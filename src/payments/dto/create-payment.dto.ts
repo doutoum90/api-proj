@@ -1,4 +1,4 @@
-import { IsString, IsNumber, IsNotEmpty } from 'class-validator';
+import { IsString, IsNotEmpty } from 'class-validator';
 
 export class CreatePaymentDto {
   @IsString()
@@ -8,19 +8,7 @@ export class CreatePaymentDto {
   @IsString()
   @IsNotEmpty()
   priceID: string;
-
-  @IsNotEmpty()
-  amount: number;
-
-  @IsString()
-  @IsNotEmpty()
-  customerId: string;
-
-  @IsString()
-  @IsNotEmpty()
-  planId: string;
 }
-
 
 export class CancelPaymentDto {
   @IsString()

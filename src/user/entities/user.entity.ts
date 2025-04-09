@@ -1,4 +1,4 @@
-import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn } from 'typeorm';
 
 @Entity()
 export class User {
@@ -46,4 +46,10 @@ export class User {
 
   @Column({ nullable: true })
   avatar?: string;
+
+  @Column({ type: 'varchar', nullable: true, unique: true })
+  stripeCustomerId?: string;
+
+  @UpdateDateColumn()
+  updatedAt: Date;
 }
