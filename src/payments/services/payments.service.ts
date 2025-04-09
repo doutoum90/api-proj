@@ -51,7 +51,7 @@ export class PaymentsService {
 
       await this.userService.updateSubscription(userId, { typeAbonnement: this.getPlanNameFromPriceId(priceId) });
       return subscription;
-    } catch (error) {
+    } catch (error: any) {
       this.logger.error(`Failed to create subscription for User ID ${userId}: ${error.message}`, error.stack);
       throw new ForbiddenException(`Failed to create subscription: ${error.message}`);
     }
@@ -75,7 +75,7 @@ export class PaymentsService {
 
       await this.userService.updateSubscription(userId, { typeAbonnement: this.getPlanNameFromPriceId(newPriceId) });
       return updatedSubscription;
-    } catch (error) {
+    } catch (error: any) {
       this.logger.error(`Failed to update subscription for User ID ${userId}: ${error.message}`, error.stack);
       throw new ForbiddenException(`Failed to update subscription: ${error.message}`);
     }
@@ -89,7 +89,7 @@ export class PaymentsService {
 
       const invoices = await this.stripe.invoices.list({ customer: customerId });
       return invoices.data;
-    } catch (error) {
+    } catch (error: any) {
       this.logger.error(`Failed to get payment history for User ID ${userId}: ${error.message}`, error.stack);
       throw new ForbiddenException('Failed to get payment history');
     }
@@ -108,7 +108,7 @@ export class PaymentsService {
         nextPaymentDate: subscription.current_period_end,
         amount: subscription.items.data[0].price.unit_amount || 0,
       };
-    } catch (error) {
+    } catch (error: any) {
       this.logger.error(`Failed to get next payment for User ID ${userId}: ${error.message}`, error.stack);
       throw new ForbiddenException('Failed to get next payment');
     }
@@ -126,7 +126,7 @@ export class PaymentsService {
       const cancelledSubscription = await this.stripe.subscriptions.cancel(subscriptions.data[0].id);
       await this.userService.updateSubscription(userId, { typeAbonnement: 'Essentiel' });
       return cancelledSubscription;
-    } catch (error) {
+    } catch (error: any) {
       this.logger.error(`Failed to cancel subscription for User ID ${userId}: ${error.message}`, error.stack);
       throw error instanceof NotFoundException ? error : new ForbiddenException('Failed to cancel subscription');
     }
@@ -147,7 +147,7 @@ export class PaymentsService {
       });
 
       return { status: subscriptions.data[0]?.status || 'no_subscription' };
-    } catch (error) {
+    } catch (error: any) {
       this.logger.error(`Failed to get subscription status for User ID ${userId}: ${error.message}`);
       throw new ForbiddenException('Failed to get subscription status');
     }

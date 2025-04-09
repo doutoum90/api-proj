@@ -19,6 +19,7 @@
     "noFallthroughCasesInSwitch": false,
     "rootDir": ".",
     "strict": true,
+    "strictPropertyInitialization": false,
     "esModuleInterop": true,
   },
   "exclude": ["node_modules", "dist", "test", "**/*spec.ts"],

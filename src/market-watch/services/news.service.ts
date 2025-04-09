@@ -24,7 +24,7 @@ export class NewsService {
       ]);
 
       return this.mergeAndSortResults([...googleNews, ...newsApi]);
-    } catch (error) {
+    } catch (error: any) {
       this.logger.error(`Error fetching news: ${error.message}`);
       return [];
     }

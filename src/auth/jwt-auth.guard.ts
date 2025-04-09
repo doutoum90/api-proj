@@ -33,7 +33,7 @@ export class JwtAuthGuard implements CanActivate {
 
             request.user = payload;
             return true;
-        } catch (error) {
+        } catch (error: any) {
             console.error(`Échec vérification JWT: ${error.message}`, {
                 token: token?.slice(0, 20) + '...'
             });

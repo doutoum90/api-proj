@@ -38,7 +38,7 @@ export class TrendsService {
 
             await this.trendsRepository.save(newTrend);
             return [newTrend];
-        } catch (error) {
+        } catch (error: any) {
             this.logger.error('Failed to fetch trends', error.stack);
             return cached ? [cached] : [];
         }
