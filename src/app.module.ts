@@ -17,6 +17,7 @@ import { StorageModule } from './storage/storage.module';
 import { AnalysisModule } from './analysis/analysis.module';
 import { NotificationsModule } from './notifications/notifications.module';
 import { ScheduleModule } from '@nestjs/schedule';
+import { AppDataSource } from './data-source';
 
 @Module({
   imports: [
@@ -31,16 +32,15 @@ import { ScheduleModule } from '@nestjs/schedule';
     CacheModule.register({
       isGlobal: true,
     }),
-    TypeOrmModule.forRoot({
-      type: 'postgres',
-      host: process.env.DB_HOST,
-      port: parseInt(process.env.DB_PORT || '5434'),
-      username: process.env.DB_USERNAME || 'postgres',
-      password: process.env.DB_PASSWORD || 'postgres',
-      database: process.env.DB_NAME || 'parametrage',
-      entities: [__dirname + '/**/*.entity{.ts,.js}'],
-      synchronize: process.env.NODE_ENV !== 'production',
-      logging: process.env.NODE_ENV !== 'production',
+    TypeOrmModule.forRootAsync({
+      useFactory: () => ({
+        ...AppDataSource.options,
+        autoLoadEntities: true,
+      }),
+      dataSourceFactory: async () => {
+        await AppDataSource.initialize();
+        return AppDataSource;
+      },
     }),
     ScheduleModule.forRoot(),
     UserModule,

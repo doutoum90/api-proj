@@ -3,8 +3,9 @@ import * as dotenv from 'dotenv';
 
 dotenv.config();
 
-export default new DataSource({
+export const AppDataSource = new DataSource({
   type: 'postgres',
+  url: process.env.DATABASE_URL,
   host: process.env.DB_HOST,
   port: parseInt(process.env.DB_PORT || '5434'),
   username: process.env.DB_USERNAME,
@@ -12,5 +13,9 @@ export default new DataSource({
   database: process.env.DB_NAME,
   entities: ['src/**/*.entity.ts'],
   migrations: ['src/migrations/*.ts'],
-  synchronize: true,
+  synchronize: false,
+  ssl: process.env.NODE_ENV === 'production' ? {
+    rejectUnauthorized: false,
+  } : false,
+  logging: true,
 });
