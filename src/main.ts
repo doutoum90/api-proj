@@ -9,11 +9,11 @@ dotenv.config();
 
 async function bootstrap() {
   logger.log('Démarrage de l’application...');
-  logger.log(`NODE_ENV: ${process.env.NODE_ENV}`);
-  logger.log(`DATABASE_URL: ${process.env.DATABASE_URL}`);
-  
+  logger.log(`NODE_ENV: ${process.env.NODE_ENV || 'non défini'}`);
+  logger.log(`DATABASE_URL: ${process.env.DATABASE_URL || 'non défini'}`);
+
   try {
-    logger.log('Création de l’instance NestJS...');
+    logger.log('Création de l’instance NestJS...');// dernier affiché, les logs suivants ne sont pas affichés
     const app = await NestFactory.create(AppModule);
     logger.log('Instance NestJS créée avec succès');
 
@@ -38,11 +38,13 @@ async function bootstrap() {
     await app.listen(port);
     logger.log(`Application démarrée sur le port ${port}`);
   } catch (error: any) {
-    logger.error('Erreur lors du démarrage de l’application', error.stack || error);
-    throw error; // Relance l’erreur pour que Render la capture dans les logs
+    console.error('Erreur brute:', error); // Log brut pour Render
+    logger.error('Erreur lors du démarrage', error.stack || error.message || error);
+    throw error;
   }
 }
 
 bootstrap().catch((error) => {
-  logger.error('Erreur critique dans bootstrap', error.stack || error);
+  console.error('Erreur critique:', error);
+  logger.error('Erreur critique dans bootstrap', error.stack || error.message || error);
 });

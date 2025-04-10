@@ -1,4 +1,3 @@
-// src/decorators/subscription.decorator.ts
 import { SetMetadata } from '@nestjs/common';
 import { SubscriptionPlan } from '../enums/plan';
 

@@ -18,6 +18,9 @@ import { AnalysisModule } from './analysis/analysis.module';
 import { NotificationsModule } from './notifications/notifications.module';
 import { ScheduleModule } from '@nestjs/schedule';
 import { AppDataSource } from './data-source';
+import { Logger } from '@nestjs/common';
+
+const logger = new Logger('AppModule');
 
 @Module({
   imports: [
@@ -33,12 +36,17 @@ import { AppDataSource } from './data-source';
       isGlobal: true,
     }),
     TypeOrmModule.forRootAsync({
-      useFactory: () => ({
-        ...AppDataSource.options,
-        autoLoadEntities: true,
-      }),
+      useFactory: () => {
+        logger.log(`DATABASE_URL dans useFactory: ${process.env.DATABASE_URL || 'non défini'}`);
+        return {
+          ...AppDataSource.options,
+          autoLoadEntities: true,
+        };
+      },
       dataSourceFactory: async () => {
+        logger.log('Initialisation de TypeORM...');
         await AppDataSource.initialize();
+        logger.log('TypeORM initialisé');
         return AppDataSource;
       },
     }),
@@ -59,4 +67,8 @@ import { AppDataSource } from './data-source';
     NotificationsModule,
   ],
 })
-export class AppModule { }
+export class AppModule {
+  constructor() {
+    logger.log(`DATABASE_URL dans AppModule: ${process.env.DATABASE_URL || 'non défini'}`);
+  }
+}
