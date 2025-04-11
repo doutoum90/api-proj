@@ -8,7 +8,7 @@ import Stripe from 'stripe';
 @Controller('api/payments')
 @UseGuards(JwtAuthGuard)
 export class PaymentsController {
-  FRONT_URL = 'http://localhost:5173';
+  FRONT_URL = process.env.NODE_ENV === 'production' ? 'https://front-r396.onrender.com' : 'http://localhost:5173';
   constructor(
     private readonly paymentsService: PaymentsService,
     @Inject('STRIPE') private stripe: Stripe,
