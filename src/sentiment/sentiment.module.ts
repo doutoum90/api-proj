@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { SentimentService } from './services/sentiment.service';
 import { SentimentController } from './sentiment.controller';
-import { Competitor } from 'src/financial/entities/competitor.entity';
+import { Competitor } from '../financial/entities/competitor.entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { TwitterService } from './services/twitter.service';
 import { RedditService } from './services/reddit.service';

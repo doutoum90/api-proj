@@ -2,7 +2,7 @@ import { Controller, Get, Post, Body, UseGuards, Req, HttpCode, HttpStatus, Inje
 import { PaymentsService } from './services/payments.service';
 import { CreatePaymentDto } from './dto/create-payment.dto';
 import { Request } from 'express';
-import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
+import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import Stripe from 'stripe';
 
 @Controller('api/payments')

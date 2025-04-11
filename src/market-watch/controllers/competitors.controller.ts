@@ -2,7 +2,7 @@ import { Controller, Get, Post, Delete, Body, Param, UseGuards, Query } from '@n
 import { ApiOperation } from '@nestjs/swagger';
 import { AddCompetitorDto } from '../dto/add-competitor.dto';
 import { ApiTags } from '@nestjs/swagger';
-import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
+import { JwtAuthGuard } from '../../auth/jwt-auth.guard';
 import { MarketWatchService } from '../services/market-watch.service';
 import { PeriodQueryDto } from '../dto/period-query.dto';
 import { MarketTrend } from '../entities/market-trend.entity';

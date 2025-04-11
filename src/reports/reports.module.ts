@@ -2,8 +2,8 @@ import { Module } from '@nestjs/common';
 import { ReportsController } from './reports.controller';
 import { Report } from './entities/report.entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { FinancialModule } from 'src/financial/financial.module';
-import { SentimentModule } from 'src/sentiment/sentiment.module';
+import { FinancialModule } from '../financial/financial.module';
+import { SentimentModule } from '../sentiment/sentiment.module';
 import { ReportService } from './services/report.service';
 import { JwtService } from '@nestjs/jwt';
 

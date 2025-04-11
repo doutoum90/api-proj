@@ -1,22 +1,21 @@
 import { DataSource } from 'typeorm';
-import * as dotenv from 'dotenv';
 import { Logger } from '@nestjs/common';
 
 const logger = new Logger('DataSource');
 
-logger.log(`DATABASE_URL: ${process.env.DATABASE_URL}`);
+logger.log(`DATABASE_URL: ${process.env.DATABASE_URL || 'non défini'}`);
+logger.log(`NODE_ENV: ${process.env.NODE_ENV || 'non défini'}`);
 
+// Charger les variables d'environnement une seule fois
+import * as dotenv from 'dotenv';
 dotenv.config();
-
 
 export const AppDataSource = new DataSource({
   type: 'postgres',
   url: process.env.DATABASE_URL,
-  entities: ['dist/**/*.entity.js'],
-  migrations: ['dist/migrations/*.js'],
+  entities: process.env.NODE_ENV === 'production' ? ['dist/**/*.entity.js'] : ['src/**/*.entity.ts'],
+  migrations: process.env.NODE_ENV === 'production' ? ['dist/migrations/*.js'] : ['src/migrations/*.ts'],
   synchronize: false,
-  ssl: process.env.NODE_ENV === 'production' ? {
-    rejectUnauthorized: false,
-  } : false,
+  ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false,
   logging: true,
 });
