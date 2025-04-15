@@ -13,7 +13,6 @@ export class ScrapingService {
       // Appel à un script Python Scrapy via exécution shell
       const { stdout } = await execPromise(`python3 scripts/scrape.py ${url}`);
       const data = JSON.parse(stdout);
-      console.log('data', data);
       this.logger.log(`Scraped data from ${url}`);
       return data;
     } catch (error: any) {

@@ -2,7 +2,7 @@ import { HttpService } from "@nestjs/axios";
 import { Injectable } from "@nestjs/common";
 import { firstValueFrom } from "rxjs";
 import { InjectRepository } from "@nestjs/typeorm";
-import { Competitor } from "./entities/competitor.entity";
+import { Competitor } from "../market-watch/entities/competitor.entity";
 import { Repository } from "typeorm";
 
 @Injectable()

@@ -1,5 +1,7 @@
 // competitor.entity.ts
-import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
+import { CompetitorDataSource } from './competitor-data-source.entity';
+import { CompetitorKPI } from './competitor-kpi.entity';
 
 @Entity()
 export class Competitor {
@@ -8,6 +10,22 @@ export class Competitor {
 
     @Column()
     name: string;
+
+    @Column({ nullable: true })
+    description: string;
+
+    @OneToMany(() => CompetitorDataSource, dataSource => dataSource.competitor, {
+        cascade: true,
+        eager: true
+    })
+    dataSources: CompetitorDataSource[];
+
+    @OneToMany(() => CompetitorKPI, kpi => kpi.competitor, {
+        cascade: true,
+        eager: true,
+        nullable: true
+    })
+    kpis: CompetitorKPI[];
 
     @Column()
     domain: string;
@@ -20,4 +38,7 @@ export class Competitor {
 
     @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
     createdAt: Date;
+
+    @Column({ nullable: true })
+    symbol: string;
 }

@@ -18,9 +18,24 @@ import { User } from '../user/entities/user.entity';
 import { JwtService } from '@nestjs/jwt';
 import { MarketShare } from './entities/market-share.entity';
 import { MarketPrice } from './entities/market-Price.entity';
+import { CompetitorDataSource } from './entities/competitor-data-source.entity';
+import { CompetitorKPI } from './entities/competitor-kpi.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Competitor, Trends, News, MarketTrend, MarketShare, MarketPrice, User]), HttpModule],
+  imports: [
+    TypeOrmModule.forFeature([
+      Competitor,
+      Trends,
+      News,
+      MarketTrend,
+      MarketShare,
+      MarketPrice,
+      User,
+      CompetitorDataSource,
+      CompetitorKPI,
+    ]),
+    HttpModule,
+  ],
   controllers: [MarketWatchController, NewsController, CompetitorsController, TrendsController],
   providers: [MarketWatchService, NewsService, CompetitorsService, TrendsService, UserService, JwtService],
   exports: [MarketWatchService, NewsService, CompetitorsService, TrendsService],
