@@ -13,12 +13,13 @@ async function bootstrap() {
   logger.log(`DATABASE_URL: ${process.env.DATABASE_URL || 'non défini'}`);
 
   try {
-    logger.log('Création de l’instance NestJS...');// dernier affiché, les logs suivants ne sont pas affichés
+    logger.log('Création de l’instance NestJS...');
     const app = await NestFactory.create(AppModule);
     logger.log('Instance NestJS créée avec succès');
 
     app.enableCors({
-      origin: process.env.NODE_ENV === 'production' ? 'https://front-r396.onrender.com' : 'http://localhost:5173',
+      // origin: process.env.NODE_ENV === 'production' ? 'https://front-r396.onrender.com' : 'http://localhost:5173',
+      origin: '*',
       allowedHeaders: ['Content-Type', 'Authorization'],
       methods: ['GET', 'POST', 'PUT', 'DELETE'],
     });
@@ -38,7 +39,7 @@ async function bootstrap() {
     await app.listen(port);
     logger.log(`Application démarrée sur le port ${port}`);
   } catch (error: any) {
-    console.error('Erreur brute:', error); // Log brut pour Render
+    console.error('Erreur brute:', error);
     logger.error('Erreur lors du démarrage', error.stack || error.message || error);
     throw error;
   }

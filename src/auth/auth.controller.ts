@@ -1,4 +1,4 @@
-import { Controller, Post, Body, Res, Req, Get } from '@nestjs/common';
+import { Controller, Post, Body, Res, Req, Get, Logger } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
@@ -7,6 +7,7 @@ import { ResetPasswordDto } from './dto/rest-password.dto';
 import { Request } from 'express';
 import { LoginResponseDto } from './dto/login-response.dto';
 
+const logger = new Logger('AuthController');
 
 @Controller('api/auth')
 export class AuthController {
@@ -19,6 +20,7 @@ export class AuthController {
 
   @Post('login')
   async login(@Body() loginDto: LoginDto): Promise<LoginResponseDto> {
+    logger.log('Login attempt');
     return this.authService.login(loginDto);
   }
 
