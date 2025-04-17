@@ -9,4 +9,8 @@ export class ApiController {
   fetchNew(name: string) {
     return this.apiService.fetchGoogleNews(name);
   }
+  @Get('status')
+  fetchStatus() {
+    return this.apiService.fetchStatus();
+  }
 }

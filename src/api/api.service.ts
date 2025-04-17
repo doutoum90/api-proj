@@ -10,4 +10,7 @@ export class ApiService {
     const response = await axios.get(url);
     return response.data;
   }
+  async fetchStatus(): Promise<any> {
+    return { status: 'ok' };
+  }
 }
