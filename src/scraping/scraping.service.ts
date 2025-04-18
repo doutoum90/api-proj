@@ -1,4 +1,3 @@
-// scraping.service.ts
 import { Injectable, Logger } from '@nestjs/common';
 import { exec } from 'child_process';
 import { promisify } from 'util';
@@ -10,7 +9,6 @@ export class ScrapingService {
 
   async scrapeWebsite(url: string): Promise<any> {
     try {
-      // Appel à un script Python Scrapy via exécution shell
       const { stdout } = await execPromise(`python3 scripts/scrape.py ${url}`);
       const data = JSON.parse(stdout);
       this.logger.log(`Scraped data from ${url}`);

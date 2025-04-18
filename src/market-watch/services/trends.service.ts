@@ -16,7 +16,6 @@ export class TrendsService {
     ) { }
 
     async getTrends(region: string): Promise<MarketTrend[]> {
-        // Vérifier le cache
         const cached = await this.trendsRepository.findOne({
             where: { region },
             order: { date: 'DESC' }
@@ -26,7 +25,6 @@ export class TrendsService {
             return [cached];
         }
 
-        // Récupérer depuis Google Trends
         try {
             const trends = await this.fetchGoogleTrends(region);
             const newTrend = this.trendsRepository.create({
@@ -49,7 +47,6 @@ export class TrendsService {
             this.httpService.get(`https://trends.google.com/trends/api/dailytrends?geo=${region}`)
         );
 
-        // Nettoyer la réponse de Google
         const jsonStr = data.replace(/^\)\]\}'/, '');
         return JSON.parse(jsonStr).default.trendingSearchesDays[0].trendingSearches;
     }

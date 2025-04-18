@@ -64,7 +64,7 @@ export class PaymentsController {
 
   @Post('create-checkout-session')
   async createCheckoutSession(@Req() req: Request, @Body() body: { plan: 'Essentiel' | 'PRO' | 'Expert' }) {
-    const priceMap = { Essentiel: 2900, PRO: 5900, Expert: 9900 }; // En centimes
+    const priceMap = { Essentiel: 2900, PRO: 5900, Expert: 9900 };
 
     const session = await this.stripe.checkout.sessions.create({
       payment_method_types: ['card'],

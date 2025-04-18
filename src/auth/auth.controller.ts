@@ -45,7 +45,6 @@ export class AuthController {
     return this.authService.refresh(refreshDto);
   }
 
-  // Verification endpoint
   @Get('verify')
   async verifyToken(@Req() req: Request) {
     return this.authService.verifyToken(req);

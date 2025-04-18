@@ -1,4 +1,3 @@
-// scraping.controller.ts
 import { Controller, Post, Body } from '@nestjs/common';
 import { ScrapingService } from './scraping.service';
 

@@ -1,4 +1,3 @@
-// notifications.service.ts
 import { Injectable } from '@nestjs/common';
 import { WebClient } from '@slack/web-api';
 import * as sgMail from '@sendgrid/mail';

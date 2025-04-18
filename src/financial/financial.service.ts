@@ -16,7 +16,6 @@ export class FinancialService {
   async getFinancialData(competitorId: string) {
     const competitor = await this.competitorRepository.findOneBy({ id: competitorId });
 
-    // Récupération depuis Yahoo Finance
     const { data } = await firstValueFrom(
       this.httpService.get(`https://query1.finance.yahoo.com/v8/finance/chart/${competitor?.symbol}`)
     );

@@ -1,4 +1,3 @@
-// user.controller.ts
 import { Controller, Get, Put, Delete, UseGuards, Req, Body, NotFoundException, HttpCode, HttpStatus, UseInterceptors, UploadedFile } from '@nestjs/common';
 import { UserService } from './user.service';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';

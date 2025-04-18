@@ -1,4 +1,3 @@
-// competitor.entity.ts
 import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
 import { CompetitorDataSource } from './competitor-data-source.entity';
 import { CompetitorKPI } from './competitor-kpi.entity';

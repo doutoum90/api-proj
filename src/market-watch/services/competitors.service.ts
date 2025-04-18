@@ -4,7 +4,6 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 import { AddCompetitorDto } from "../dto/add-competitor.dto";
 
-// competitors.service.ts
 @Injectable()
 export class CompetitorsService {
   constructor(

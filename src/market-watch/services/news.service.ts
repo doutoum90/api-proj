@@ -65,7 +65,6 @@ export class NewsService {
   }
 
   private parseGoogleNews(xmlData: string, sector: string): NewsItemDto[] {
-    // Implémentation d'un parser XML custom
     const items: NewsItemDto[] = [];
     const regex = /<item>([\s\S]*?)<\/item>/g;
     let match;
@@ -89,14 +88,13 @@ export class NewsService {
   }
 
   private mergeAndSortResults(results: NewsItemDto[]): NewsItemDto[] {
-    // Fusion et déduplication
     const uniqueResults = Array.from(new Set(results.map(item => item.url)))
       .map(url => results.find(item => item.url === url))
       .filter((item): item is NewsItemDto => item !== undefined);
 
     return uniqueResults
       .sort((a, b) => b.publishedAt.getTime() - a.publishedAt.getTime())
-      .slice(0, 20); // Limite à 20 résultats
+      .slice(0, 20);
   }
 
   private extractImageUrl(content: string): string {

@@ -6,7 +6,6 @@ const logger = new Logger('DataSource');
 logger.log(`DATABASE_URL: ${process.env.DATABASE_URL || 'non défini'}`);
 logger.log(`NODE_ENV: ${process.env.NODE_ENV || 'non défini'}`);
 
-// Charger les variables d'environnement une seule fois
 import * as dotenv from 'dotenv';
 dotenv.config();
 
