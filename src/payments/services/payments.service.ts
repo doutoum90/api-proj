@@ -83,11 +83,22 @@ export class PaymentsService {
 
   async getPaymentHistory(userId: number): Promise<Stripe.Invoice[]> {
     try {
+      this.logger.debug(`Tentative de récupération de l'historique des paiements pour l'utilisateur ${userId}`);
+      
       const user = await this.userService.findById(userId);
-      if (!user || !user.stripeCustomerId) throw new NotFoundException('User or Stripe customer not found');
+      this.logger.debug('Utilisateur trouvé:', user);
+      
+      if (!user || !user.stripeCustomerId) {
+        this.logger.warn(`Utilisateur non trouvé ou sans stripeCustomerId. User: ${JSON.stringify(user)}`);
+        throw new NotFoundException('User or Stripe customer not found');
+      }
+      
       const customerId = user.stripeCustomerId;
-
+      this.logger.debug(`StripeCustomerId trouvé: ${customerId}`);
+      
       const invoices = await this.stripe.invoices.list({ customer: customerId });
+      this.logger.debug('Factures trouvées:', invoices);
+      
       return invoices.data;
     } catch (error: any) {
       this.logger.error(`Failed to get payment history for User ID ${userId}: ${error.message}`, error.stack);
@@ -97,11 +108,22 @@ export class PaymentsService {
 
   async getNextPayment(userId: number): Promise<{ nextPaymentDate: number; amount: number } | null> {
     try {
+      this.logger.debug(`Tentative de récupération du prochain paiement pour l'utilisateur ${userId}`);
+      
       const user = await this.userService.findById(userId);
-      if (!user || !user.stripeCustomerId) throw new NotFoundException('User or Stripe customer not found');
+      this.logger.debug('Utilisateur trouvé:', user);
+      
+      if (!user || !user.stripeCustomerId) {
+        this.logger.warn(`Utilisateur non trouvé ou sans stripeCustomerId. User: ${JSON.stringify(user)}`);
+        throw new NotFoundException('User or Stripe customer not found');
+      }
+      
       const customerId = user.stripeCustomerId;
-
+      this.logger.debug(`StripeCustomerId trouvé: ${customerId}`);
+      
       const subscriptions = await this.stripe.subscriptions.list({ customer: customerId, status: 'active', limit: 1 });
+      this.logger.debug('Abonnements trouvés:', subscriptions);
+      
       if (!subscriptions.data.length) return null;
       const subscription = subscriptions.data[0];
       return {

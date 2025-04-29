@@ -40,7 +40,7 @@ export class AuthService {
     const refreshPayload = { sub: user.id, type: 'refresh' };
 
     return {
-      access_token: this.jwtService.sign(accessPayload),
+      access_token: this.jwtService.sign(accessPayload, { expiresIn: '15m' }),
       refresh_token: this.jwtService.sign(refreshPayload, { expiresIn: '7d' }),
       user,
     };
@@ -64,7 +64,7 @@ export class AuthService {
     const refreshPayload = { sub: user.id, type: 'refresh' };
 
     return {
-      access_token: this.jwtService.sign(accessPayload),
+      access_token: this.jwtService.sign(accessPayload, { expiresIn: '15m' }),
       refresh_token: this.jwtService.sign(refreshPayload, { expiresIn: '7d' }),
       user,
     };

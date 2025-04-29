@@ -1,12 +1,12 @@
 import { DataSource } from 'typeorm';
 import { Logger } from '@nestjs/common';
+import * as dotenv from 'dotenv';
 
 const logger = new Logger('DataSource');
 
 logger.log(`DATABASE_URL: ${process.env.DATABASE_URL || 'non défini'}`);
 logger.log(`NODE_ENV: ${process.env.NODE_ENV || 'non défini'}`);
 
-import * as dotenv from 'dotenv';
 dotenv.config();
 
 export const AppDataSource = new DataSource({

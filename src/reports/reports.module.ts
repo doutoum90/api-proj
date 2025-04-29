@@ -6,14 +6,16 @@ import { FinancialModule } from '../financial/financial.module';
 import { SentimentModule } from '../sentiment/sentiment.module';
 import { ReportService } from './services/report.service';
 import { JwtService } from '@nestjs/jwt';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
   imports: [
+    ConfigModule,
     FinancialModule,
     SentimentModule,
     TypeOrmModule.forFeature([Report])],
   controllers: [ReportsController],
-  providers: [ReportService,  JwtService],
+  providers: [ReportService, JwtService],
   exports: [ReportService],
 })
 export class ReportsModule { }

@@ -25,17 +25,34 @@ export class JwtAuthGuard implements CanActivate {
                 throw new Error('JWT_SECRET non configuré');
             }
 
+            console.log('Tentative de vérification du token:', {
+                tokenStart: token.slice(0, 20) + '...',
+                path: request.path,
+                method: request.method
+            });
+
             const payload = this.jwtService.verify(token, {
                 secret,
-                clockTolerance: 30,
+                clockTolerance: 60 * 15, // 15 minutes de tolérance
                 ignoreExpiration: false
+            });
+
+            console.log('Token vérifié avec succès:', {
+                sub: payload.sub,
+                email: payload.email,
+                exp: new Date(payload.exp * 1000).toISOString(),
+                path: request.path
             });
 
             request.user = payload;
             return true;
         } catch (error: any) {
-            console.error(`Échec vérification JWT: ${error.message}`, {
-                token: token?.slice(0, 20) + '...'
+            console.error('Échec vérification JWT:', {
+                error: error.message,
+                name: error.name,
+                tokenStart: token?.slice(0, 20) + '...',
+                path: request.path,
+                method: request.method
             });
             throw new UnauthorizedException(`Erreur d'authentification: ${error.message}`);
         }

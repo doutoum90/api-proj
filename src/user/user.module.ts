@@ -4,10 +4,11 @@ import { User } from './entities/user.entity';
 import { UserService } from './user.service';
 import { UserController } from './user.controller';
 import { AuthModule } from '../auth/auth.module';
-
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
   imports: [
+    ConfigModule,
     forwardRef(() => AuthModule),
     TypeOrmModule.forFeature([User])
   ],
