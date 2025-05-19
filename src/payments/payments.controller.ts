@@ -2,11 +2,11 @@ import { Controller, Get, Post, Body, UseGuards, Req, HttpCode, HttpStatus, Inje
 import { PaymentsService } from './services/payments.service';
 import { CreatePaymentDto } from './dto/create-payment.dto';
 import { Request } from 'express';
-import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { UserAuthGuard } from '../auth/guards/user-auth.guard';
 import Stripe from 'stripe';
 
 @Controller('api/payments')
-@UseGuards(JwtAuthGuard)
+@UseGuards(UserAuthGuard)
 export class PaymentsController {
   FRONT_URL = process.env.NODE_ENV === 'production' ? 'https://front-r396.onrender.com' : 'http://localhost:5173';
   constructor(

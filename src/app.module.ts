@@ -4,6 +4,7 @@ import { UserModule } from './user/user.module';
 import { ReportsModule } from './reports/reports.module';
 import { PaymentsModule } from './payments/payments.module';
 import { Logger } from '@nestjs/common';
+import { StaticPagesModule } from './static-pages/static-pages.module';
 
 const logger = new Logger('AppModule');
 
@@ -23,6 +24,7 @@ const logger = new Logger('AppModule');
     UserModule,
     ReportsModule,
     PaymentsModule,
+    StaticPagesModule,
   ],
   controllers: [],
   providers: [],

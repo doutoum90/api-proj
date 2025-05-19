@@ -1,5 +1,10 @@
 import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn } from 'typeorm';
 
+export enum UserRole {
+  USER = 'USER',
+  ADMIN = 'ADMIN'
+}
+
 @Entity('user')
 export class User {
   @PrimaryGeneratedColumn()
@@ -49,6 +54,9 @@ export class User {
 
   @Column({ type: 'varchar', nullable: true, unique: true })
   stripeCustomerId?: string;
+
+  @Column({ type: 'enum', enum: UserRole, default: UserRole.USER })
+  role: UserRole;
 
   @UpdateDateColumn()
   updatedAt: Date;

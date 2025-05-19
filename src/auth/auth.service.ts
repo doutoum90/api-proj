@@ -7,7 +7,6 @@ import { LoginDto } from './dto/login.dto';
 import { RegisterDto } from './dto/register.dto';
 import { ForgotPasswordDto } from './dto/forgot-password.dto';
 import { ResetPasswordDto } from './dto/rest-password.dto';
-import { UpdateUserDto } from '../user/dto/update-user.dto';
 import { Request } from 'express';
 import { ConfigService } from '@nestjs/config';
 import { LoginResponseDto } from './dto/login-response.dto';

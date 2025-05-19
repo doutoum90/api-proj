@@ -1,6 +1,6 @@
 import { Controller, Get, Put, Delete, UseGuards, Req, Body, NotFoundException, HttpCode, HttpStatus, UseInterceptors, UploadedFile } from '@nestjs/common';
 import { UserService } from './user.service';
-import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { UserAuthGuard } from '../auth/guards/user-auth.guard';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UpdateSubscriptionDto } from './dto/update-subscription-dto';
 import { FileInterceptor } from '@nestjs/platform-express';
@@ -17,7 +17,7 @@ declare global {
   }
 }
 @Controller('api/user')
-@UseGuards(JwtAuthGuard)
+@UseGuards(UserAuthGuard)
 export class UserController {
   constructor(private readonly userService: UserService) { }
 

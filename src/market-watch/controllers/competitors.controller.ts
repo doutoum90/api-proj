@@ -2,7 +2,7 @@ import { Controller, Get, Post, Delete, Body, Param, UseGuards, Query } from '@n
 import { ApiOperation } from '@nestjs/swagger';
 import { AddCompetitorDto } from '../dto/add-competitor.dto';
 import { ApiTags } from '@nestjs/swagger';
-import { JwtAuthGuard } from '../../auth/jwt-auth.guard';
+import { UserAuthGuard } from '../../auth/guards/user-auth.guard';
 import { MarketWatchService } from '../services/market-watch.service';
 import { PeriodQueryDto } from '../dto/period-query.dto';
 import { MarketTrend } from '../entities/market-trend.entity';
@@ -11,7 +11,7 @@ import { MarketPrice } from '../entities/market-Price.entity';
 
 @ApiTags('Veille - Concurrents')
 @Controller('api/veille/competitors')
-@UseGuards(JwtAuthGuard)
+@UseGuards(UserAuthGuard)
 export class CompetitorsController {
 
     constructor(private readonly marketService: MarketWatchService) { }
