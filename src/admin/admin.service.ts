@@ -1,10 +1,17 @@
-import { Injectable } from '@nestjs/common';
+import { 
+  Injectable, 
+  ConflictException, 
+  InternalServerErrorException,
+  UnauthorizedException
+} from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Admin } from './entities/admin.entities';
-import { AdminUser } from './dto/admin-user';
-import { compare } from 'bcrypt';
+import { compare, hash } from 'bcrypt';
+import { AdminRegisterDto } from './dto/admin-register.dto';
+import { JwtPayload } from './dto/jwt-payload.interface';
+import { StdioNull } from 'child_process';
 
 @Injectable()
 export class AdminService {
@@ -12,37 +19,88 @@ export class AdminService {
     @InjectRepository(Admin)
     private adminRepository: Repository<Admin>,
     private jwtService: JwtService,
-  ) { }
+  ) {}
 
-  findById(id: number) {
-    console.log('id');
+  async refreshToken(refreshToken: string) {
+    try {
+      const payload = this.jwtService.verify(refreshToken, {
+        secret: process.env.ADMIN_REFRESH_SECRET
+      });
+      
+      const admin = await this.adminRepository.findOne({
+        where: { id: payload.sub, refreshToken }
+      });
+
+      if (!admin) throw new UnauthorizedException();
+
+      const newPayload: JwtPayload = {
+        sub: admin.id,
+        email: admin.email,
+        role: 'admin'
+      };
+
+      return {
+        access_token: this.jwtService.sign(newPayload, {
+          secret: process.env.ADMIN_JWT_SECRET,
+          expiresIn: process.env.ADMIN_JWT_EXPIRATION
+        })
+      };
+    } catch (e) {
+      throw new UnauthorizedException('Invalid refresh token');
+    }
+  }
+
+  async findById(id: number): Promise<Admin | null> {
     return this.adminRepository.findOne({ where: { id } });
   }
 
-  async validateAdmin(email: string, pass: string): Promise<any> {
+  async validateAdmin(email: string, password: string): Promise<Admin | null> {
     const admin = await this.adminRepository.findOne({ where: { email } });
-    if (admin && (await compare(pass, admin.password))) {
-      const { password: _, ...result } = admin;
-      return result;
-    }
-    return null;
+    if (!admin) return null;
+
+    const isPasswordValid = await compare(password, admin.password);
+    return isPasswordValid ? admin : null;
   }
 
-  async login(admin: any) {
-    const payload = {
+  async login(admin: Admin): Promise<{ access_token: string }> {
+    const payload = { 
       sub: admin.id,
       email: admin.email,
-      role: 'admin' // Ajout d'un rôle spécifique
+      role: 'admin'
     };
+    
     return {
       access_token: this.jwtService.sign(payload, {
         secret: process.env.ADMIN_JWT_SECRET,
-        expiresIn: '1h'
+        expiresIn: process.env.ADMIN_JWT_EXPIRATION || '1h'
       }),
     };
   }
 
-  async register(userData: AdminUser){
-    // code à faire
+  
+  async register(adminData: AdminRegisterDto): Promise<Admin> {
+    try {
+      const existingAdmin = await this.adminRepository.findOne({ 
+        where: { email: adminData.email } 
+      });
+
+      if (existingAdmin) {
+        throw new ConflictException('Email already exists');
+      }
+
+      const hashedPassword = await hash(adminData.password, 10);
+      
+      const newAdmin = this.adminRepository.create({
+        ...adminData,
+        password: hashedPassword
+      });
+
+      return await this.adminRepository.save(newAdmin);
+    } catch (error) {
+      if (error.code === '23505') {
+        throw new ConflictException('Admin already exists');
+      }
+      throw new InternalServerErrorException('Registration failed');
+    }
   }
 }

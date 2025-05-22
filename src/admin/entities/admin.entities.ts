@@ -16,4 +16,7 @@ export class Admin {
 
     @Column('simple-array')
     permissions: string[];
+
+    @Column({ nullable: true })
+    refreshToken?: string;
 }
